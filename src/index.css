@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Layout sin scrollbar de body ───────────────────────── */
+html, body {
+  overflow: hidden;
+  height: 100%;
+}
+
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── Scrollbar minimalista (solo barra, sin fondo ni flechas) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #e5e7eb transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #e5e7eb;
+  border-radius: 9999px;
+}
+
+*::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* ── Títulos de página: Times New Roman cursiva ──────────── */
+.page-title {
+  font-family: 'Times New Roman', Times, serif;
+  font-style: italic;
+}
