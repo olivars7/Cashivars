@@ -10,6 +10,7 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
+import DarkModeToggle from './DarkModeToggle';
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', Icon: LayoutDashboard },
@@ -29,11 +30,23 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="hidden md:flex flex-col w-52 h-screen fixed inset-y-0 left-0 bg-white text-gray-500 border-r border-gray-200 z-50">
+    <aside
+      className="hidden md:flex flex-col w-52 h-screen fixed inset-y-0 left-0 z-50 transition-colors duration-300"
+      style={{
+        backgroundColor: 'var(--c-bg-surface)',
+        borderRight: '1px solid var(--c-border)',
+        color: 'var(--c-text-muted)',
+      }}
+    >
       {/* Header */}
-      <div className="flex items-center gap-2.5 px-5 py-5 border-b border-gray-200">
-        <Wallet className="text-black" size={20} />
-        <span className="text-black font-bold text-lg">Cashivars</span>
+      <div
+        className="flex items-center gap-2.5 px-5 py-5"
+        style={{ borderBottom: '1px solid var(--c-border)' }}
+      >
+        <Wallet style={{ color: 'var(--c-text-primary)' }} size={20} />
+        <span className="font-bold text-lg" style={{ color: 'var(--c-text-primary)' }}>
+          Cashivars
+        </span>
       </div>
 
       {/* Navigation */}
@@ -46,10 +59,13 @@ export default function Sidebar() {
               [
                 'flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200 group',
                 isActive
-                  ? 'bg-black text-white'
-                  : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900',
+                  ? 'bg-black text-white dark:bg-white dark:text-black'
+                  : 'hover:bg-[var(--c-bg-surface-alt)]',
               ].join(' ')
             }
+            style={({ isActive }) => ({
+              color: isActive ? undefined : 'var(--c-text-muted)',
+            })}
           >
             <Icon
               size={16}
@@ -61,15 +77,29 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="px-2.5 py-4 border-t border-gray-200 flex flex-col gap-2">
+      <div
+        className="px-2.5 py-4 flex flex-col gap-2"
+        style={{ borderTop: '1px solid var(--c-border)' }}
+      >
+        {/* Dark mode toggle */}
+        <div className="flex items-center justify-between px-3 py-1">
+          <span className="text-xs font-medium" style={{ color: 'var(--c-text-faint)' }}>
+            Apariencia
+          </span>
+          <DarkModeToggle />
+        </div>
+
         <button
           onClick={handleReset}
-          className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors duration-200 w-full"
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors duration-200 w-full hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
+          style={{ color: 'var(--c-text-muted)' }}
         >
           <RotateCcw size={14} />
           Restablecer datos
         </button>
-        <p className="text-xs text-gray-400 px-3">Cashivars v1.0</p>
+        <p className="text-xs px-3" style={{ color: 'var(--c-text-faint)' }}>
+          Cashivars v1.0
+        </p>
       </div>
     </aside>
   );

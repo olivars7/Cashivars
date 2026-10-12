@@ -7,7 +7,10 @@ export default function Layout() {
   const navigate = useNavigate();
 
   return (
-    <div className="h-screen flex flex-col bg-gray-100 overflow-hidden">
+    <div
+      className="h-screen flex flex-col overflow-hidden transition-colors duration-300"
+      style={{ backgroundColor: 'var(--c-bg-page)', color: 'var(--c-text-primary)' }}
+    >
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop Sidebar */}
         <Sidebar />
@@ -27,7 +30,7 @@ export default function Layout() {
       {/* Mobile floating "+" button — top-right, all pages */}
       <button
         onClick={() => navigate('/transactions', { state: { openAdd: true } })}
-        className="md:hidden fixed top-3 right-3 z-40 w-11 h-11 rounded-full bg-black text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform duration-150"
+        className="md:hidden fixed top-3 right-3 z-40 w-11 h-11 rounded-full bg-black text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform duration-150 dark:bg-white dark:text-black"
         aria-label="Nueva transacción"
       >
         <Plus size={20} />

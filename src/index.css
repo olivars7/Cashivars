@@ -2,10 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─────────────────────────────────────────────────────────
+   TEMA — variables de color
+   Cambiar aquí para afectar todo el sitio.
+   ───────────────────────────────────────────────────────── */
+
+/* Tema CLARO */
+:root {
+  --c-bg-page:        #f3f4f6; /* fondo principal (gray-100) */
+  --c-bg-surface:     #ffffff; /* tarjetas, sidebar, modales */
+  --c-bg-surface-alt: #f9fafb; /* hover suave / fondo alterno */
+  --c-border:         #e5e7eb; /* bordes generales */
+  --c-border-subtle:  #f3f4f6; /* bordes muy suaves */
+  --c-text-primary:   #111827; /* texto principal */
+  --c-text-secondary: #374151; /* texto secundario */
+  --c-text-muted:     #6b7280; /* texto apagado (gray-500) */
+  --c-text-faint:     #9ca3af; /* texto muy apagado (gray-400) */
+  --c-scrollbar:      #e5e7eb;
+}
+
+/* Tema OSCURO */
+.dark {
+  --c-bg-page:        #0f1117; /* fondo principal */
+  --c-bg-surface:     #1a1d27; /* tarjetas, sidebar, modales */
+  --c-bg-surface-alt: #22263a; /* hover suave / fondo alterno */
+  --c-border:         #2d3149; /* bordes generales */
+  --c-border-subtle:  #252840; /* bordes muy suaves */
+  --c-text-primary:   #f1f5f9; /* texto principal */
+  --c-text-secondary: #cbd5e1; /* texto secundario */
+  --c-text-muted:     #94a3b8; /* texto apagado */
+  --c-text-faint:     #64748b; /* texto muy apagado */
+  --c-scrollbar:      #2d3149;
+}
+
 /* ── Layout sin scrollbar de body ───────────────────────── */
 html, body {
   overflow: hidden;
   height: 100%;
+  background-color: var(--c-bg-page);
+  color: var(--c-text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #root {
@@ -13,10 +49,10 @@ html, body {
   overflow: hidden;
 }
 
-/* ── Scrollbar minimalista (solo barra, sin fondo ni flechas) */
+/* ── Scrollbar minimalista (tematizada) ─────────────────── */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #e5e7eb transparent;
+  scrollbar-color: var(--c-scrollbar) transparent;
 }
 
 *::-webkit-scrollbar {
@@ -29,7 +65,7 @@ html, body {
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: #e5e7eb;
+  background-color: var(--c-scrollbar);
   border-radius: 9999px;
 }
 
@@ -41,4 +77,51 @@ html, body {
 .page-title {
   font-family: 'Times New Roman', Times, serif;
   font-style: italic;
+}
+
+/* ── Dark mode toggle switch ────────────────────────────── */
+.theme-switch {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.35s ease, box-shadow 0.35s ease;
+  border: 2px solid var(--c-border);
+  background: var(--c-bg-surface-alt);
+  overflow: hidden;
+}
+
+.theme-switch:hover {
+  box-shadow: 0 0 0 4px var(--c-border);
+}
+
+.theme-switch .icon-sun,
+.theme-switch .icon-moon {
+  position: absolute;
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity 0.3s ease;
+}
+
+.theme-switch .icon-sun {
+  transform: scale(1) rotate(0deg);
+  opacity: 1;
+}
+
+.theme-switch .icon-moon {
+  transform: scale(0) rotate(-90deg);
+  opacity: 0;
+}
+
+.dark .theme-switch .icon-sun {
+  transform: scale(0) rotate(90deg);
+  opacity: 0;
+}
+
+.dark .theme-switch .icon-moon {
+  transform: scale(1) rotate(0deg);
+  opacity: 1;
 }

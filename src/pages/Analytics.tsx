@@ -41,14 +41,22 @@ function MetricCard({
   color: string;
 }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex items-center gap-4">
+    <div
+      className="rounded-xl shadow-sm p-5 flex items-center gap-4 transition-colors duration-300"
+      style={{
+        backgroundColor: 'var(--c-bg-surface)',
+        border: '1px solid var(--c-border)',
+      }}
+    >
       <div className={`p-3 rounded-lg ${color}`}>
         <Icon size={20} className="text-white" />
       </div>
       <div>
-        <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">{label}</p>
-        <p className="text-xl font-bold text-gray-900">{value}</p>
-        <p className="text-xs text-gray-400">{sub}</p>
+        <p className="text-xs uppercase tracking-wide font-medium" style={{ color: 'var(--c-text-muted)' }}>
+          {label}
+        </p>
+        <p className="text-xl font-bold" style={{ color: 'var(--c-text-primary)' }}>{value}</p>
+        <p className="text-xs" style={{ color: 'var(--c-text-faint)' }}>{sub}</p>
       </div>
     </div>
   );
@@ -106,7 +114,6 @@ export default function Analytics() {
     const inc = monthTxs.filter((t) => t.type === 'income').reduce((s, t) => s + t.amount, 0);
     const exp = monthTxs.filter((t) => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
     const porc = inc > 0 ? Math.round((exp / inc) * 100) : 0;
-    // Proyección: sobrante actual (no hay días futuros en datos históricos — mostramos balance)
     return { presupuestoPorc: porc, proyeccionSobrante: inc - exp };
   }, [transactions]);
 
@@ -114,15 +121,18 @@ export default function Analytics() {
     <div>
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-1">
-          <TrendingUp size={22} className="text-gray-400" />
-          <h1 className="text-2xl font-bold text-gray-900 page-title">Análisis y Algoritmos</h1>
+          <TrendingUp size={22} style={{ color: 'var(--c-text-faint)' }} />
+          <h1 className="text-2xl font-bold page-title" style={{ color: 'var(--c-text-primary)' }}>
+            Análisis y Algoritmos
+          </h1>
         </div>
-        <p className="text-sm text-gray-400 ml-8">Métricas inteligentes y patrones de tus finanzas.</p>
+        <p className="text-sm ml-8" style={{ color: 'var(--c-text-faint)' }}>
+          Métricas inteligentes y patrones de tus finanzas.
+        </p>
       </div>
 
       {/* Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        {/* Gasto Hormiga — advertencia */}
         <MetricCard
           icon={Bug}
           label="Gasto Hormiga (mes actual)"
@@ -130,7 +140,6 @@ export default function Analytics() {
           sub="Gastos pequeños acumulados < $300"
           color="bg-orange-500"
         />
-        {/* Presupuesto Consumido — negativo/grave */}
         <MetricCard
           icon={Percent}
           label="Presupuesto Consumido"
@@ -138,7 +147,6 @@ export default function Analytics() {
           sub="Gastos / ingresos mes actual"
           color="bg-red-600"
         />
-        {/* Proyección positiva — positivo */}
         <MetricCard
           icon={TrendingUp}
           label="Balance Mes Actual"
@@ -151,8 +159,17 @@ export default function Analytics() {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Donut — expenses by category */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
+        <div
+          className="rounded-xl shadow-sm p-6 transition-colors duration-300"
+          style={{
+            backgroundColor: 'var(--c-bg-surface)',
+            border: '1px solid var(--c-border)',
+          }}
+        >
+          <h2
+            className="text-sm font-semibold uppercase tracking-wide mb-4"
+            style={{ color: 'var(--c-text-muted)' }}
+          >
             Gastos por Categoría
           </h2>
           <ResponsiveContainer width="100%" height={260}>
@@ -178,21 +195,36 @@ export default function Analytics() {
         </div>
 
         {/* Bar — income vs expenses last 6 months */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
+        <div
+          className="rounded-xl shadow-sm p-6 transition-colors duration-300"
+          style={{
+            backgroundColor: 'var(--c-bg-surface)',
+            border: '1px solid var(--c-border)',
+          }}
+        >
+          <h2
+            className="text-sm font-semibold uppercase tracking-wide mb-4"
+            style={{ color: 'var(--c-text-muted)' }}
+          >
             Ingresos vs Gastos (últimos 6 meses)
           </h2>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={monthlyComparison} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-              <XAxis dataKey="month" tick={{ fontSize: 12, fill: '#9ca3af' }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--c-border)" />
+              <XAxis dataKey="month" tick={{ fontSize: 12, fill: 'var(--c-text-faint)' }} />
               <YAxis
-                tick={{ fontSize: 11, fill: '#9ca3af' }}
+                tick={{ fontSize: 11, fill: 'var(--c-text-faint)' }}
                 tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
               />
-              <Tooltip formatter={(val) => fmt(Number(val))} />
+              <Tooltip
+                formatter={(val) => fmt(Number(val))}
+                contentStyle={{
+                  backgroundColor: 'var(--c-bg-surface)',
+                  border: '1px solid var(--c-border)',
+                  color: 'var(--c-text-primary)',
+                }}
+              />
               <Legend />
-              {/* Verde = positivo (ingresos), Rojo = negativo (gastos) */}
               <Bar dataKey="income" name="Ingresos" fill="#16a34a" radius={[4, 4, 0, 0]} />
               <Bar dataKey="expenses" name="Gastos" fill="#dc2626" radius={[4, 4, 0, 0]} />
             </BarChart>
