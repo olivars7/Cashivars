@@ -1,24 +1,13 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import {
-  Wallet,
-  Menu,
-  X,
-  LayoutDashboard,
-  Receipt,
-  PieChart,
-  PiggyBank,
-  CreditCard,
-  Banknote,
-} from 'lucide-react';
+import IonIcon from './IonIcon';
 
 const navItems = [
-  { to: '/dashboard', label: 'Dashboard', Icon: LayoutDashboard },
-  { to: '/transactions', label: 'Transacciones', Icon: Receipt },
-  { to: '/cards', label: 'Tarjetas', Icon: CreditCard },
-  { to: '/analytics', label: 'Analíticas', Icon: PieChart },
-  { to: '/savings', label: 'Ahorros', Icon: PiggyBank },
-  { to: '/debts', label: 'Deudas', Icon: Banknote },
+  { to: '/dashboard',    label: 'Dashboard',     icon: 'grid-outline'      },
+  { to: '/transactions', label: 'Transacciones', icon: 'receipt-outline'   },
+  { to: '/cards',        label: 'Tarjetas',       icon: 'card-outline'      },
+  { to: '/analytics',   label: 'Analíticas',    icon: 'pie-chart-outline' },
+  { to: '/debts',        label: 'Deudas',         icon: 'cash-outline'      },
 ];
 
 export default function TopbarMobile() {
@@ -29,7 +18,7 @@ export default function TopbarMobile() {
       {/* Topbar */}
       <header className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200">
         <div className="flex items-center gap-2">
-          <Wallet className="text-black" size={20} />
+          <IonIcon name="wallet-outline" size={20} className="text-black" />
           <span className="text-black font-bold text-lg">Cashivars</span>
         </div>
         <button
@@ -37,14 +26,14 @@ export default function TopbarMobile() {
           className="text-gray-400 hover:text-gray-900 transition-colors"
           aria-label="Abrir menú"
         >
-          <Menu size={22} />
+          <IonIcon name="menu-outline" size={22} />
         </button>
       </header>
 
       {/* Overlay */}
       {open && (
         <div
-          className="md:hidden fixed inset-0 z-40 bg-black/60"
+          className="md:hidden fixed inset-0 z-40 modal-overlay"
           onClick={() => setOpen(false)}
         />
       )}
@@ -57,7 +46,7 @@ export default function TopbarMobile() {
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
           <div className="flex items-center gap-2">
-            <Wallet className="text-black" size={20} />
+            <IonIcon name="wallet-outline" size={20} className="text-black" />
             <span className="text-black font-bold text-lg">Cashivars</span>
           </div>
           <button
@@ -65,12 +54,12 @@ export default function TopbarMobile() {
             className="text-gray-400 hover:text-gray-900"
             aria-label="Cerrar menú"
           >
-            <X size={20} />
+            <IonIcon name="close-outline" size={20} />
           </button>
         </div>
 
         <nav className="flex flex-col gap-1 mt-4 px-3">
-          {navItems.map(({ to, label, Icon }) => (
+          {navItems.map(({ to, label, icon }) => (
             <NavLink
               key={to}
               to={to}
@@ -84,7 +73,7 @@ export default function TopbarMobile() {
                 ].join(' ')
               }
             >
-              <Icon size={18} className="flex-shrink-0" />
+              <IonIcon name={icon} size={18} className="flex-shrink-0" />
               {label}
             </NavLink>
           ))}

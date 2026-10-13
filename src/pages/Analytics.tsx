@@ -13,7 +13,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { useStore } from '../context/StoreContext';
-import { Bug, Percent, TrendingUp } from 'lucide-react';
+import IonIcon from '../components/IonIcon';
 
 // Paleta semántica: verde (positivo), rojo (negativo), morado (estrategia), naranja (advertencia), negro (neutro)
 const DONUT_COLORS = ['#9333ea', '#dc2626', '#16a34a', '#ea580c', '#111827', '#0ea5e9', '#f59e0b', '#10b981'];
@@ -28,13 +28,13 @@ const fmt = (n: number) =>
   n.toLocaleString('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
 
 function MetricCard({
-  icon: Icon,
+  icon,
   label,
   value,
   sub,
   color,
 }: {
-  icon: React.ElementType;
+  icon: string;
   label: string;
   value: string;
   sub: string;
@@ -49,7 +49,7 @@ function MetricCard({
       }}
     >
       <div className={`p-3 rounded-lg ${color}`}>
-        <Icon size={20} className="text-white" />
+        <IonIcon name={icon} size={20} className="text-white" />
       </div>
       <div>
         <p className="text-xs uppercase tracking-wide font-medium" style={{ color: 'var(--c-text-muted)' }}>
@@ -121,7 +121,7 @@ export default function Analytics() {
     <div>
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-1">
-          <TrendingUp size={22} style={{ color: 'var(--c-text-faint)' }} />
+          <IonIcon name="trending-up-outline" size={22} style={{ color: 'var(--c-text-faint)' }} />
           <h1 className="text-2xl font-bold page-title" style={{ color: 'var(--c-text-primary)' }}>
             Análisis y Algoritmos
           </h1>
@@ -134,21 +134,21 @@ export default function Analytics() {
       {/* Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <MetricCard
-          icon={Bug}
+          icon="bug-outline"
           label="Gasto Hormiga (mes actual)"
           value={fmt(gastoHormiga)}
           sub="Gastos pequeños acumulados < $300"
           color="bg-orange-500"
         />
         <MetricCard
-          icon={Percent}
+          icon="stats-chart-outline"
           label="Presupuesto Consumido"
           value={`${presupuestoPorc}%`}
           sub="Gastos / ingresos mes actual"
           color="bg-red-600"
         />
         <MetricCard
-          icon={TrendingUp}
+          icon="trending-up-outline"
           label="Balance Mes Actual"
           value={fmt(proyeccionSobrante)}
           sub="Ingresos − Gastos del mes"

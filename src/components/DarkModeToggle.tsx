@@ -1,5 +1,5 @@
-import { Sun, Moon } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import IonIcon from './IonIcon';
 
 export default function DarkModeToggle() {
   const { isDark, toggle } = useTheme();
@@ -12,10 +12,10 @@ export default function DarkModeToggle() {
       title={isDark ? 'Tema claro' : 'Tema oscuro'}
     >
       <span className="icon-sun" aria-hidden>
-        <Sun size={18} className="text-amber-500" />
+        <IonIcon name="sunny-outline" size={18} className="text-amber-500" />
       </span>
       <span className="icon-moon" aria-hidden>
-        <Moon size={18} className="text-indigo-400" />
+        <IonIcon name="moon-outline" size={18} className="text-indigo-400" />
       </span>
     </button>
   );

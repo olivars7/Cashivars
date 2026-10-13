@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, TrendingUp, TrendingDown, DollarSign, AlertTriangle } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
+import IonIcon from '../components/IonIcon';
 
 function Widget({
   title,
@@ -32,7 +32,7 @@ function Widget({
           style={{ color: 'var(--c-text-faint)' }}
           title="Ver más"
         >
-          <ArrowUpRight size={16} />
+          <IonIcon name="arrow-up-outline" size={16} />
         </Link>
       </div>
       {children}
@@ -44,14 +44,14 @@ const fmt = (n: number) =>
   n.toLocaleString('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
 
 export default function Dashboard() {
-  const { transactions, totalIncome, totalExpenses, balance, savingsGoals } = useStore();
+  const { transactions, totalIncome, totalExpenses, balance } = useStore();
   const lastFive = transactions.slice(0, 5);
 
   return (
     <div>
       <div className="mb-6">
-        <div className="flex items-center gap-2 mb-1">
-          <DollarSign size={22} style={{ color: 'var(--c-text-faint)' }} />
+        <div className="flex items-center gap-3 mb-1">
+          <IonIcon name="cash-outline" size={22} style={{ color: 'var(--c-text-faint)' }} />
           <h1 className="text-2xl font-bold page-title" style={{ color: 'var(--c-text-primary)' }}>
             Resumen General
           </h1>
@@ -67,14 +67,14 @@ export default function Dashboard() {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                <TrendingUp size={16} />
+                <IonIcon name="trending-up-outline" size={16} />
                 <span className="text-sm font-medium">Ingresos</span>
               </div>
               <span className="font-semibold text-green-600 dark:text-green-400">{fmt(totalIncome)}</span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
-                <TrendingDown size={16} />
+                <IonIcon name="trending-down-outline" size={16} />
                 <span className="text-sm font-medium">Gastos</span>
               </div>
               <span className="font-semibold text-red-600 dark:text-red-400">{fmt(totalExpenses)}</span>
@@ -84,7 +84,7 @@ export default function Dashboard() {
               style={{ borderTop: '1px solid var(--c-border-subtle)' }}
             >
               <div className="flex items-center gap-2" style={{ color: 'var(--c-text-secondary)' }}>
-                <DollarSign size={16} />
+                <IonIcon name="cash-outline" size={16} />
                 <span className="text-sm font-semibold">Saldo Total</span>
               </div>
               <span className="text-lg font-bold" style={{ color: 'var(--c-text-primary)' }}>
@@ -122,45 +122,12 @@ export default function Dashboard() {
           </ul>
         </Widget>
 
-        {/* Widget 3 — Savings goals */}
-        <Widget title="Metas de Ahorro" to="/savings">
-          <div className="space-y-4">
-            {savingsGoals.slice(0, 2).map((g) => {
-              const pct = Math.round((g.current / g.target) * 100);
-              return (
-                <div key={g.id}>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="font-medium" style={{ color: 'var(--c-text-secondary)' }}>
-                      {g.title}
-                    </span>
-                    <span style={{ color: 'var(--c-text-muted)' }}>
-                      {fmt(g.current)} / {fmt(g.target)}
-                    </span>
-                  </div>
-                  <div
-                    className="w-full rounded-full h-2.5"
-                    style={{ backgroundColor: 'var(--c-border)' }}
-                  >
-                    <div
-                      className="bg-purple-600 h-2.5 rounded-full"
-                      style={{ width: `${pct}%` }}
-                    />
-                  </div>
-                  <p className="text-xs mt-1" style={{ color: 'var(--c-text-faint)' }}>
-                    {pct}% alcanzado
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </Widget>
-
-        {/* Widget 4 — Algorithmic alerts */}
+        {/* Widget 3 — Algorithmic alerts */}
         <Widget title="Alertas Algorítmicas" to="/analytics">
           <div className="space-y-3">
             {/* Advertencia — naranja */}
             <div className="flex items-start gap-3 p-3 bg-orange-50 border border-orange-300 rounded-lg dark:bg-orange-900/20 dark:border-orange-700/50">
-              <AlertTriangle size={16} className="text-orange-500 mt-0.5 flex-shrink-0" />
+              <IonIcon name="warning-outline" size={16} className="text-orange-500 mt-0.5 flex-shrink-0" />
               <p className="text-sm text-orange-700 dark:text-orange-300">
                 <strong>Advertencia:</strong> Estás al 80% de tu presupuesto semanal en{' '}
                 <strong>Entretenimiento</strong>.
@@ -168,7 +135,7 @@ export default function Dashboard() {
             </div>
             {/* Estrategia — morado */}
             <div className="flex items-start gap-3 p-3 bg-purple-50 border border-purple-200 rounded-lg dark:bg-purple-900/20 dark:border-purple-700/50">
-              <AlertTriangle size={16} className="text-purple-500 mt-0.5 flex-shrink-0" />
+              <IonIcon name="warning-outline" size={16} className="text-purple-500 mt-0.5 flex-shrink-0" />
               <p className="text-sm text-purple-700 dark:text-purple-300">
                 <strong>Estrategia:</strong> Reducir gastos en Alimentación podría ahorrarte{' '}
                 <strong>$800/mes</strong>.

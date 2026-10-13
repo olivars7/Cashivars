@@ -1,24 +1,13 @@
 import { NavLink } from 'react-router-dom';
-import {
-  Wallet,
-  LayoutDashboard,
-  Receipt,
-  PieChart,
-  PiggyBank,
-  CreditCard,
-  Banknote,
-  RotateCcw,
-} from 'lucide-react';
 import { useStore } from '../context/StoreContext';
-import DarkModeToggle from './DarkModeToggle';
+import IonIcon from './IonIcon';
 
 const navItems = [
-  { to: '/dashboard', label: 'Dashboard', Icon: LayoutDashboard },
-  { to: '/transactions', label: 'Transacciones', Icon: Receipt },
-  { to: '/cards', label: 'Tarjetas', Icon: CreditCard },
-  { to: '/analytics', label: 'Analíticas', Icon: PieChart },
-  { to: '/savings', label: 'Ahorros', Icon: PiggyBank },
-  { to: '/debts', label: 'Deudas', Icon: Banknote },
+  { to: '/dashboard',    label: 'Dashboard',     icon: 'grid-outline'        },
+  { to: '/transactions', label: 'Transacciones', icon: 'receipt-outline'     },
+  { to: '/cards',        label: 'Tarjetas',       icon: 'card-outline'        },
+  { to: '/analytics',   label: 'Analíticas',    icon: 'pie-chart-outline'   },
+  { to: '/debts',        label: 'Deudas',         icon: 'cash-outline'        },
 ];
 
 export default function Sidebar() {
@@ -43,7 +32,7 @@ export default function Sidebar() {
         className="flex items-center gap-2.5 px-5 py-5"
         style={{ borderBottom: '1px solid var(--c-border)' }}
       >
-        <Wallet style={{ color: 'var(--c-text-primary)' }} size={20} />
+        <IonIcon name="wallet-outline" size={20} style={{ color: 'var(--c-text-primary)' }} />
         <span className="font-bold text-lg" style={{ color: 'var(--c-text-primary)' }}>
           Cashivars
         </span>
@@ -51,7 +40,7 @@ export default function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex flex-col gap-0.5 mt-3 px-2.5 flex-1">
-        {navItems.map(({ to, label, Icon }) => (
+        {navItems.map(({ to, label, icon }) => (
           <NavLink
             key={to}
             to={to}
@@ -67,7 +56,8 @@ export default function Sidebar() {
               color: isActive ? undefined : 'var(--c-text-muted)',
             })}
           >
-            <Icon
+            <IonIcon
+              name={icon}
               size={16}
               className="transition-transform duration-200 group-hover:scale-110 flex-shrink-0"
             />
@@ -81,20 +71,12 @@ export default function Sidebar() {
         className="px-2.5 py-4 flex flex-col gap-2"
         style={{ borderTop: '1px solid var(--c-border)' }}
       >
-        {/* Dark mode toggle */}
-        <div className="flex items-center justify-between px-3 py-1">
-          <span className="text-xs font-medium" style={{ color: 'var(--c-text-faint)' }}>
-            Apariencia
-          </span>
-          <DarkModeToggle />
-        </div>
-
         <button
           onClick={handleReset}
           className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors duration-200 w-full hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
           style={{ color: 'var(--c-text-muted)' }}
         >
-          <RotateCcw size={14} />
+          <IonIcon name="refresh-outline" size={14} />
           Restablecer datos
         </button>
         <p className="text-xs px-3" style={{ color: 'var(--c-text-faint)' }}>

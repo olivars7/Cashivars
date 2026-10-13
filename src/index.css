@@ -125,3 +125,59 @@ html, body {
   transform: scale(1) rotate(0deg);
   opacity: 1;
 }
+
+/* ── Modal overlay — light tint + blur ──────────────────── */
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* ── Bottom-sheet (mobile modals) ──────────────────────────── */
+@keyframes sheet-in {
+  from { transform: translateY(105%); opacity: 0.6; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes sheet-out {
+  from { transform: translateY(0);    opacity: 1; }
+  to   { transform: translateY(105%); opacity: 0; }
+}
+.sheet-enter {
+  animation: sheet-in 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.sheet-leave {
+  animation: sheet-out 0.28s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+/* ── Overlay backdrop ───────────────────────────────────────── */
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes overlay-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+.overlay-enter {
+  animation: overlay-in 0.28s ease forwards;
+}
+.overlay-leave {
+  animation: overlay-out 0.28s ease forwards;
+}
+
+/* ── Desktop modal panel (scale + fade) ─────────────────────── */
+@keyframes modal-panel-in {
+  from { opacity: 0; transform: scale(0.95) translateY(8px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+@keyframes modal-panel-out {
+  from { opacity: 1; transform: scale(1)    translateY(0); }
+  to   { opacity: 0; transform: scale(0.95) translateY(8px); }
+}
+.modal-panel-enter {
+  animation: modal-panel-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.modal-panel-leave {
+  animation: modal-panel-out 0.22s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
