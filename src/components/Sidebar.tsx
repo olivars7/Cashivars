@@ -7,7 +7,7 @@ const navItems = [
   { to: '/transactions', label: 'Transacciones', icon: 'receipt-outline'     },
   { to: '/cards',        label: 'Tarjetas',       icon: 'card-outline'        },
   { to: '/analytics',   label: 'Analíticas',    icon: 'pie-chart-outline'   },
-  { to: '/debts',        label: 'Deudas',         icon: 'cash-outline'        },
+  { to: '/settings',    label: 'Configuración',  icon: 'settings-outline'    },
 ];
 
 export default function Sidebar() {
@@ -32,7 +32,7 @@ export default function Sidebar() {
         className="flex items-center gap-2.5 px-5 py-5"
         style={{ borderBottom: '1px solid var(--c-border)' }}
       >
-        <IonIcon name="wallet-outline" size={20} style={{ color: 'var(--c-text-primary)' }} />
+        <img src="/icon.png" alt="Cashivars" className="w-7 h-7 rounded-md object-contain" />
         <span className="font-bold text-lg" style={{ color: 'var(--c-text-primary)' }}>
           Cashivars
         </span>

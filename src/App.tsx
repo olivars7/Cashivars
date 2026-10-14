@@ -3,7 +3,7 @@ import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Analytics from './pages/Analytics';
-import Debts from './pages/Debts';
+import Settings from './pages/Settings';
 import Cards from './pages/Cards';
 
 export default function App() {
@@ -16,7 +16,7 @@ export default function App() {
           <Route path="transactions" element={<Transactions />} />
           <Route path="cards" element={<Cards />} />
           <Route path="analytics" element={<Analytics />} />
-          <Route path="debts" element={<Debts />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>
     </BrowserRouter>

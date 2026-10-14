@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import IonIcon from '../components/IonIcon';
 import { CreditCard } from '../mocks/mockData';
 import { useStore } from '../context/StoreContext';
@@ -81,13 +81,48 @@ export default function Cards() {
   const { creditCards, addCreditCard, editCreditCard, deleteCreditCard } = useStore();
 
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalLeaving, setModalLeaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [deletingCardId, setDeletingCardId] = useState<string | null>(null);
 
+  // Swipe-to-dismiss
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const swipeTouchY = useRef<number | null>(null);
+  const [swipeDelta, setSwipeDelta] = useState(0);
+
+  function onSheetTouchStart(e: React.TouchEvent) {
+    const sheetTop = sheetRef.current?.getBoundingClientRect().top ?? 0;
+    if (e.touches[0].clientY - sheetTop > 64) return;
+    swipeTouchY.current = e.touches[0].clientY;
+  }
+
+  function onSheetTouchMove(e: React.TouchEvent) {
+    if (swipeTouchY.current === null) return;
+    const delta = Math.max(0, e.touches[0].clientY - swipeTouchY.current);
+    setSwipeDelta(delta);
+  }
+
+  function onSheetTouchEnd() {
+    if (swipeTouchY.current === null) return;
+    swipeTouchY.current = null;
+    if (swipeDelta > 80) {
+      setSwipeDelta(0);
+      dismissModal();
+    } else {
+      setSwipeDelta(0);
+    }
+  }
+
+  function dismissModal() {
+    setModalLeaving(true);
+    setTimeout(() => { setModalOpen(false); setModalLeaving(false); }, 290);
+  }
+
   function openAdd() {
     setEditingId(null);
     setForm(EMPTY_FORM);
+    setModalLeaving(false);
     setModalOpen(true);
   }
 
@@ -101,6 +136,7 @@ export default function Cards() {
       network: card.network,
       gradient: card.gradient,
     });
+    setModalLeaving(false);
     setModalOpen(true);
   }
 
@@ -127,7 +163,7 @@ export default function Cards() {
     } else {
       addCreditCard(payload);
     }
-    setModalOpen(false);
+    dismissModal();
   }
 
   const deletingCard = deletingCardId
@@ -143,7 +179,7 @@ export default function Cards() {
 
   return (
     <div>
-      <div className="flex items-start justify-between mb-6">
+      <div className="flex items-start mb-6">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <IonIcon name="card-outline" size={22} style={{ color: 'var(--c-text-faint)' }} />
@@ -155,13 +191,6 @@ export default function Cards() {
             Tus tarjetas de débito registradas.
           </p>
         </div>
-        <button
-          onClick={openAdd}
-          className="flex items-center gap-2 bg-black hover:bg-gray-800 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
-        >
-          <IonIcon name="add-outline" size={16} />
-          Nueva Tarjeta
-        </button>
       </div>
 
       {creditCards.length === 0 ? (
@@ -244,28 +273,50 @@ export default function Cards() {
               </div>
             </div>
           ))}
+          {/* Add new card button */}
+          <button
+            onClick={openAdd}
+            className="flex flex-col items-center justify-center gap-2 w-full h-44 rounded-2xl transition-colors duration-200 group"
+            style={{
+              border: '2px dashed var(--c-border)',
+              backgroundColor: 'transparent',
+              color: 'var(--c-text-faint)',
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'var(--c-bg-surface)';
+              (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--c-text-muted)';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent';
+              (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--c-border)';
+            }}
+          >
+            <IonIcon name="add-circle-outline" size={32} className="opacity-40 group-hover:opacity-70 transition-opacity" />
+            <span className="text-sm font-medium opacity-50 group-hover:opacity-80 transition-opacity">
+              Nueva Tarjeta
+            </span>
+          </button>
         </div>
       )}
 
       {/* ── Add / Edit Modal ──────────────────────────────────────────────────── */}
       {modalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center modal-overlay px-4">
+        <div
+          className={`fixed inset-0 z-[60] modal-overlay ${modalLeaving ? 'overlay-leave' : 'overlay-enter'}
+            md:flex md:items-center md:justify-center md:px-4
+            flex items-end`}
+          onMouseDown={(e) => { if (e.target === e.currentTarget) dismissModal(); }}
+        >
+          {/* ── Desktop panel ── */}
           <div
-            className="rounded-2xl shadow-xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto transition-colors duration-300"
-            style={{
-              backgroundColor: 'var(--c-bg-surface)',
-              border: '1px solid var(--c-border)',
-            }}
+            className={`hidden md:block rounded-2xl shadow-xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto transition-colors duration-300 ${modalLeaving ? 'modal-panel-leave' : 'modal-panel-enter'}`}
+            style={{ backgroundColor: 'var(--c-bg-surface)', border: '1px solid var(--c-border)' }}
           >
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-base font-semibold" style={{ color: 'var(--c-text-primary)' }}>
                 {editingId ? 'Editar Tarjeta' : 'Nueva Tarjeta'}
               </h2>
-              <button
-                onClick={() => setModalOpen(false)}
-                className="transition-colors hover:opacity-70"
-                style={{ color: 'var(--c-text-faint)' }}
-              >
+              <button onClick={dismissModal} className="transition-colors hover:opacity-70" style={{ color: 'var(--c-text-faint)' }}>
                 <IonIcon name="close-outline" size={18} />
               </button>
             </div>
@@ -273,174 +324,223 @@ export default function Cards() {
             {/* Live preview */}
             <div className="mb-5">
               <CardPreview
-                name={form.name}
-                bank={form.bank}
-                lastFour={form.lastFour}
-                network={form.network}
-                gradient={form.gradient}
+                name={form.name} bank={form.bank} lastFour={form.lastFour}
+                network={form.network} gradient={form.gradient}
                 balance={parseFloat(form.balance) || 0}
               />
             </div>
 
             <div className="space-y-4">
-              {/* Nombre + Banco */}
               <div className="flex gap-3">
                 <div className="flex-1">
-                  <label
-                    className="block text-xs font-medium mb-1"
-                    style={{ color: 'var(--c-text-muted)' }}
-                  >
-                    Nombre de la tarjeta
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ej: BBVA Débito"
-                    value={form.name}
+                  <label className="block text-xs font-medium mb-1" style={{ color: 'var(--c-text-muted)' }}>Nombre de la tarjeta</label>
+                  <input type="text" placeholder="Ej: BBVA Débito" value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className={inputCls}
-                    style={{
-                      border: '1px solid var(--c-border)',
-                      backgroundColor: 'var(--c-bg-page)',
-                      color: 'var(--c-text-primary)',
-                    }}
-                  />
+                    className={inputCls} style={{ border: '1px solid var(--c-border)', backgroundColor: 'var(--c-bg-page)', color: 'var(--c-text-primary)' }} />
                 </div>
                 <div className="flex-1">
-                  <label
-                    className="block text-xs font-medium mb-1"
-                    style={{ color: 'var(--c-text-muted)' }}
-                  >
-                    Banco
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ej: BBVA"
-                    value={form.bank}
+                  <label className="block text-xs font-medium mb-1" style={{ color: 'var(--c-text-muted)' }}>Banco</label>
+                  <input type="text" placeholder="Ej: BBVA" value={form.bank}
                     onChange={(e) => setForm({ ...form, bank: e.target.value })}
-                    className={inputCls}
-                    style={{
-                      border: '1px solid var(--c-border)',
-                      backgroundColor: 'var(--c-bg-page)',
-                      color: 'var(--c-text-primary)',
-                    }}
-                  />
+                    className={inputCls} style={{ border: '1px solid var(--c-border)', backgroundColor: 'var(--c-bg-page)', color: 'var(--c-text-primary)' }} />
                 </div>
               </div>
-
-              {/* Últimos 4 + Red */}
               <div className="flex gap-3">
                 <div className="w-36">
-                  <label
-                    className="block text-xs font-medium mb-1"
-                    style={{ color: 'var(--c-text-muted)' }}
-                  >
-                    Últimos 4 dígitos
-                  </label>
-                  <input
-                    type="text"
-                    maxLength={4}
-                    placeholder="0000"
-                    value={form.lastFour}
-                    onChange={(e) =>
-                      setForm({ ...form, lastFour: e.target.value.replace(/\D/g, '').slice(0, 4) })
-                    }
-                    className={inputCls}
-                    style={{
-                      border: '1px solid var(--c-border)',
-                      backgroundColor: 'var(--c-bg-page)',
-                      color: 'var(--c-text-primary)',
-                    }}
-                  />
+                  <label className="block text-xs font-medium mb-1" style={{ color: 'var(--c-text-muted)' }}>Últimos 4 dígitos</label>
+                  <input type="text" maxLength={4} placeholder="0000" value={form.lastFour}
+                    onChange={(e) => setForm({ ...form, lastFour: e.target.value.replace(/\D/g, '').slice(0, 4) })}
+                    className={inputCls} style={{ border: '1px solid var(--c-border)', backgroundColor: 'var(--c-bg-page)', color: 'var(--c-text-primary)' }} />
                 </div>
                 <div className="flex-1">
-                  <label
-                    className="block text-xs font-medium mb-1"
-                    style={{ color: 'var(--c-text-muted)' }}
-                  >
-                    Red
-                  </label>
-                  <select
-                    value={form.network}
-                    onChange={(e) =>
-                      setForm({ ...form, network: e.target.value as 'Visa' | 'Mastercard' })
-                    }
-                    className={inputCls}
-                    style={{
-                      border: '1px solid var(--c-border)',
-                      backgroundColor: 'var(--c-bg-page)',
-                      color: 'var(--c-text-primary)',
-                    }}
-                  >
+                  <label className="block text-xs font-medium mb-1" style={{ color: 'var(--c-text-muted)' }}>Red</label>
+                  <select value={form.network}
+                    onChange={(e) => setForm({ ...form, network: e.target.value as 'Visa' | 'Mastercard' })}
+                    className={inputCls} style={{ border: '1px solid var(--c-border)', backgroundColor: 'var(--c-bg-page)', color: 'var(--c-text-primary)' }}>
                     <option value="Visa">Visa</option>
                     <option value="Mastercard">Mastercard</option>
                   </select>
                 </div>
               </div>
-
-              {/* Saldo disponible */}
               <div>
-                <label
-                  className="block text-xs font-medium mb-1"
-                  style={{ color: 'var(--c-text-muted)' }}
-                >
-                  Saldo disponible (MXN)
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  placeholder="0"
-                  value={form.balance}
+                <label className="block text-xs font-medium mb-1" style={{ color: 'var(--c-text-muted)' }}>Saldo disponible (MXN)</label>
+                <input type="number" min="0" placeholder="0" value={form.balance}
                   onChange={(e) => setForm({ ...form, balance: e.target.value })}
-                  className={inputCls}
-                  style={{
-                    border: '1px solid var(--c-border)',
-                    backgroundColor: 'var(--c-bg-page)',
-                    color: 'var(--c-text-primary)',
-                  }}
-                />
+                  className={inputCls} style={{ border: '1px solid var(--c-border)', backgroundColor: 'var(--c-bg-page)', color: 'var(--c-text-primary)' }} />
               </div>
-
-              {/* Color */}
               <div>
-                <label
-                  className="block text-xs font-medium mb-2"
-                  style={{ color: 'var(--c-text-muted)' }}
-                >
-                  Color de la tarjeta
-                </label>
+                <label className="block text-xs font-medium mb-2" style={{ color: 'var(--c-text-muted)' }}>Color de la tarjeta</label>
                 <div className="flex flex-wrap gap-2">
                   {GRADIENT_OPTIONS.map((opt) => (
-                    <button
-                      key={opt.value}
-                      type="button"
+                    <button key={opt.value} type="button"
                       onClick={() => setForm({ ...form, gradient: opt.value })}
-                      className={`w-8 h-8 rounded-lg bg-gradient-to-br ${opt.value} border-2 transition-all ${
-                        form.gradient === opt.value ? 'border-white scale-110' : 'border-transparent'
-                      }`}
-                      title={opt.label}
-                    />
+                      className={`w-8 h-8 rounded-lg bg-gradient-to-br ${opt.value} border-2 transition-all ${form.gradient === opt.value ? 'border-white scale-110' : 'border-transparent'}`}
+                      title={opt.label} />
                   ))}
                 </div>
               </div>
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button
-                onClick={() => setModalOpen(false)}
+              <button onClick={dismissModal}
                 className="px-4 py-2 text-sm rounded-lg transition-colors hover:bg-[var(--c-bg-surface-alt)]"
-                style={{
-                  border: '1px solid var(--c-border)',
-                  color: 'var(--c-text-muted)',
-                }}
-              >
+                style={{ border: '1px solid var(--c-border)', color: 'var(--c-text-muted)' }}>
                 Cancelar
               </button>
-              <button
-                onClick={handleSubmit}
-                className="flex items-center gap-2 px-4 py-2 text-sm bg-black text-white rounded-lg hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
-              >
+              <button onClick={handleSubmit}
+                className="flex items-center gap-2 px-4 py-2 text-sm bg-black text-white rounded-lg hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200">
                 <IonIcon name="checkmark-outline" size={15} />
                 {editingId ? 'Guardar Cambios' : 'Añadir'}
+              </button>
+            </div>
+          </div>
+
+          {/* ── Mobile bottom-sheet ── */}
+          <div
+            ref={sheetRef}
+            className={`md:hidden w-full flex flex-col transition-colors duration-300
+              rounded-t-3xl shadow-2xl max-h-[93vh] ${modalLeaving ? 'sheet-leave' : 'sheet-enter'}`}
+            style={{
+              backgroundColor: 'var(--c-bg-surface)',
+              borderTop: '1px solid var(--c-border)',
+              transform: swipeDelta > 0 ? `translateY(${swipeDelta}px)` : undefined,
+              opacity: swipeDelta > 0 ? Math.max(0.5, 1 - swipeDelta / 300) : undefined,
+              transition: swipeDelta > 0 ? 'none' : undefined,
+            }}
+            onTouchStart={onSheetTouchStart}
+            onTouchMove={onSheetTouchMove}
+            onTouchEnd={onSheetTouchEnd}
+          >
+            {/* drag handle */}
+            <div className="flex justify-center pt-3 pb-1 shrink-0">
+              <div className="w-10 h-1 rounded-full" style={{ backgroundColor: 'var(--c-border)' }} />
+            </div>
+
+            {/* header */}
+            <div className="flex items-center gap-3 px-5 pt-3 pb-4 shrink-0">
+              <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
+                style={{ backgroundColor: 'var(--c-bg-surface-alt)' }}>
+                <IonIcon name="card-outline" size={22} style={{ color: 'var(--c-text-muted)' }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-base font-semibold truncate" style={{ color: 'var(--c-text-primary)' }}>
+                  {editingId ? 'Editar tarjeta' : 'Nueva tarjeta'}
+                </p>
+                <p className="text-xs truncate" style={{ color: 'var(--c-text-faint)' }}>
+                  {form.name || 'Sin nombre'}
+                  {form.bank ? ` · ${form.bank}` : ''}
+                </p>
+              </div>
+              <button onClick={dismissModal}
+                className="w-9 h-9 flex items-center justify-center rounded-full shrink-0 transition-colors"
+                style={{ backgroundColor: 'var(--c-bg-surface-alt)', color: 'var(--c-text-muted)' }}>
+                <IonIcon name="close-outline" size={20} />
+              </button>
+            </div>
+
+            {/* scrollable body */}
+            <div className="flex-1 overflow-y-auto px-5 pb-2">
+
+              {/* Live preview */}
+              <div className="mb-4">
+                <CardPreview
+                  name={form.name} bank={form.bank} lastFour={form.lastFour}
+                  network={form.network} gradient={form.gradient}
+                  balance={parseFloat(form.balance) || 0}
+                />
+              </div>
+
+              {/* Nombre */}
+              <div className="mb-4">
+                <label className="flex items-center gap-1.5 text-xs font-medium mb-1.5" style={{ color: 'var(--c-text-muted)' }}>
+                  <IonIcon name="text-outline" size={12} /> Nombre de la tarjeta
+                </label>
+                <input type="text" placeholder="Ej: BBVA Débito" value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  className={inputCls} style={{ border: '1px solid var(--c-border)', backgroundColor: 'var(--c-bg-page)', color: 'var(--c-text-primary)' }} />
+              </div>
+
+              {/* Banco */}
+              <div className="mb-4">
+                <label className="flex items-center gap-1.5 text-xs font-medium mb-1.5" style={{ color: 'var(--c-text-muted)' }}>
+                  <IonIcon name="business-outline" size={12} /> Banco
+                </label>
+                <input type="text" placeholder="Ej: BBVA" value={form.bank}
+                  onChange={(e) => setForm({ ...form, bank: e.target.value })}
+                  className={inputCls} style={{ border: '1px solid var(--c-border)', backgroundColor: 'var(--c-bg-page)', color: 'var(--c-text-primary)' }} />
+              </div>
+
+              {/* Últimos 4 + Red */}
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                  <label className="flex items-center gap-1.5 text-xs font-medium mb-1.5" style={{ color: 'var(--c-text-muted)' }}>
+                    <IonIcon name="keypad-outline" size={12} /> Últimos 4 dígitos
+                  </label>
+                  <input type="text" maxLength={4} placeholder="0000" value={form.lastFour}
+                    onChange={(e) => setForm({ ...form, lastFour: e.target.value.replace(/\D/g, '').slice(0, 4) })}
+                    className={inputCls} style={{ border: '1px solid var(--c-border)', backgroundColor: 'var(--c-bg-page)', color: 'var(--c-text-primary)' }} />
+                </div>
+                <div>
+                  <label className="flex items-center gap-1.5 text-xs font-medium mb-1.5" style={{ color: 'var(--c-text-muted)' }}>
+                    <IonIcon name="globe-outline" size={12} /> Red
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {(['Visa', 'Mastercard'] as const).map((net) => (
+                      <button key={net} type="button"
+                        onClick={() => setForm({ ...form, network: net })}
+                        className="py-2 rounded-xl text-xs font-medium transition-all"
+                        style={form.network === net
+                          ? { backgroundColor: 'var(--c-text-primary)', color: 'var(--c-bg-surface)', border: '1.5px solid transparent' }
+                          : { backgroundColor: 'var(--c-bg-page)', color: 'var(--c-text-muted)', border: '1.5px solid var(--c-border)' }}>
+                        {net}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Saldo */}
+              <div className="mb-4">
+                <label className="flex items-center gap-1.5 text-xs font-medium mb-1.5" style={{ color: 'var(--c-text-muted)' }}>
+                  <IonIcon name="cash-outline" size={12} /> Saldo disponible (MXN)
+                </label>
+                <input type="number" min="0" placeholder="0" value={form.balance}
+                  onChange={(e) => setForm({ ...form, balance: e.target.value })}
+                  className="w-full rounded-xl px-4 py-3 text-xl font-bold focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors"
+                  style={{ border: '1px solid var(--c-border)', backgroundColor: 'var(--c-bg-page)', color: 'var(--c-text-primary)' }} />
+              </div>
+
+              {/* Color */}
+              <div className="mb-4">
+                <label className="flex items-center gap-1.5 text-xs font-medium mb-2" style={{ color: 'var(--c-text-muted)' }}>
+                  <IonIcon name="color-palette-outline" size={12} /> Color de la tarjeta
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {GRADIENT_OPTIONS.map((opt) => (
+                    <button key={opt.value} type="button"
+                      onClick={() => setForm({ ...form, gradient: opt.value })}
+                      className={`w-9 h-9 rounded-xl bg-gradient-to-br ${opt.value} border-2 transition-all ${form.gradient === opt.value ? 'border-white scale-110' : 'border-transparent'}`}
+                      title={opt.label} />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* footer sticky */}
+            <div className="shrink-0 px-5 pt-3 pb-8 flex items-center gap-3"
+              style={{ borderTop: '1px solid var(--c-border-subtle)' }}>
+              {editingId && (
+                <button onClick={() => { dismissModal(); setDeletingCardId(editingId); }}
+                  className="flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-medium text-red-500 transition-colors"
+                  style={{ border: '1.5px solid rgba(239,68,68,0.25)', backgroundColor: 'rgba(239,68,68,0.06)' }}>
+                  <IonIcon name="trash-outline" size={16} />
+                  Eliminar
+                </button>
+              )}
+              <button onClick={handleSubmit}
+                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 transition-colors">
+                <IonIcon name={editingId ? 'save-outline' : 'add-circle-outline'} size={18} />
+                {editingId ? 'Guardar cambios' : 'Añadir tarjeta'}
               </button>
             </div>
           </div>

@@ -8,7 +8,7 @@ const navItems = [
   { to: '/transactions', iconOutline: 'receipt-outline',     iconFilled: 'receipt',      label: 'Transacciones' },
   { to: '/cards',        iconOutline: 'card-outline',        iconFilled: 'card',         label: 'Tarjetas'      },
   { to: '/analytics',   iconOutline: 'pie-chart-outline',   iconFilled: 'pie-chart',    label: 'Analíticas'    },
-  { to: '/debts',        iconOutline: 'cash-outline',        iconFilled: 'cash',         label: 'Deudas'        },
+  { to: '/settings',    iconOutline: 'settings-outline',    iconFilled: 'settings',     label: 'Configuración' },
 ];
 
 const SPRING_IN  = 'cubic-bezier(0.34, 1.3, 0.5, 1)';
