@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { usePrefs } from '../context/PrefsContext';
 import {
   PieChart,
   Pie,
@@ -32,12 +33,6 @@ const MONTH_LABELS: Record<string, string> = {
 const MEDIO_LABELS: Record<string, string> = {
   debit: 'Débito', cash: 'Efectivo', credit: 'Crédito', promise: 'Promesa',
 };
-
-const fmt = (n: number) =>
-  n.toLocaleString('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
-
-const fmtShort = (n: number) =>
-  n >= 1000 ? `$${(n / 1000).toFixed(0)}k` : `$${n}`;
 
 // ── Componentes ───────────────────────────────────────────────────────────────
 
@@ -128,6 +123,7 @@ const tooltipStyle = {
 
 export default function Analytics() {
   const { transactions, savingsGoals } = useStore();
+  const { fmt, fmtShort } = usePrefs();
 
   // ── Gastos por categoría (histórico completo) ─────────────────────────────
   const categoryExpenses = useMemo(() => {

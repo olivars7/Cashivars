@@ -14,14 +14,14 @@ export default function Layout() {
 
   // Shared glass-button style for FABs
   const fabStyle: React.CSSProperties = {
-    background:           isDark ? 'rgba(0,0,0,0.28)'               : 'rgba(255,255,255,0.28)',
-    border:               isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(0,0,0,0.06)',
+    background:           isDark ? '#2d2d2d'                          : 'rgba(255,255,255,0.28)',
+    border:               isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.06)',
     boxShadow:            isDark
-      ? 'inset 0 1px 0 rgba(255,255,255,0.04), 0 12px 32px -8px rgba(0,0,0,0.25)'
+      ? '0 12px 32px -8px rgba(0,0,0,0.45)'
       : 'inset 0 -1px 0 rgba(0,0,0,0.03), 0 12px 32px -8px rgba(0,0,0,0.10)',
-    backdropFilter:       'blur(3px)',
-    WebkitBackdropFilter: 'blur(3px)',
-    color:                isDark ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.75)',
+    backdropFilter:       isDark ? 'none' : 'blur(3px)',
+    WebkitBackdropFilter: isDark ? 'none' : 'blur(3px)',
+    color:                isDark ? '#f1f1f1' : 'rgba(0,0,0,0.75)',
   };
 
   // "+" is always at right-3; gear/theme FAB sit 4px to its left (w-11=44px → right: 12 + 44 + 4 = 60px)
@@ -38,7 +38,7 @@ export default function Layout() {
         <Sidebar />
 
         {/* Main Content */}
-        <main className="flex-1 md:pl-52 overflow-y-auto">
+        <main className="flex-1 md:pl-[224px] overflow-y-auto">
           {/* pb: 64px pill + 8px gap + ~34px safe-area = ~106px; use pb-28 (112px) for comfort */}
           <div className="p-6 pb-28 md:pb-6">
             <Outlet />

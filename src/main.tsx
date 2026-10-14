@@ -4,13 +4,16 @@ import './index.css';
 import App from './App';
 import { StoreProvider } from './context/StoreContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { PrefsProvider } from './context/PrefsContext';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider>
-      <StoreProvider>
-        <App />
-      </StoreProvider>
+      <PrefsProvider>
+        <StoreProvider>
+          <App />
+        </StoreProvider>
+      </PrefsProvider>
     </ThemeProvider>
   </StrictMode>,
 );

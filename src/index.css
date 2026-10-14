@@ -21,18 +21,18 @@
   --c-scrollbar:      #e5e7eb;
 }
 
-/* Tema OSCURO */
+/* Tema OSCURO — paleta neutra estilo YouTube */
 .dark {
-  --c-bg-page:        #0f1117; /* fondo principal */
-  --c-bg-surface:     #1a1d27; /* tarjetas, sidebar, modales */
-  --c-bg-surface-alt: #22263a; /* hover suave / fondo alterno */
-  --c-border:         #2d3149; /* bordes generales */
-  --c-border-subtle:  #252840; /* bordes muy suaves */
-  --c-text-primary:   #f1f5f9; /* texto principal */
-  --c-text-secondary: #cbd5e1; /* texto secundario */
-  --c-text-muted:     #94a3b8; /* texto apagado */
-  --c-text-faint:     #64748b; /* texto muy apagado */
-  --c-scrollbar:      #2d3149;
+  --c-bg-page:        #0f0f0f; /* fondo principal */
+  --c-bg-surface:     #212121; /* tarjetas, sidebar, modales */
+  --c-bg-surface-alt: #2d2d2d; /* hover suave / fondo alterno */
+  --c-border:         #3d3d3d; /* bordes generales */
+  --c-border-subtle:  #272727; /* bordes muy suaves */
+  --c-text-primary:   #f1f1f1; /* texto principal */
+  --c-text-secondary: #aaaaaa; /* texto secundario */
+  --c-text-muted:     #717171; /* texto apagado */
+  --c-text-faint:     #4d4d4d; /* texto muy apagado */
+  --c-scrollbar:      #3d3d3d;
 }
 
 /* ── Layout sin scrollbar de body ───────────────────────── */

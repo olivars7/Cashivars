@@ -3,11 +3,9 @@ import { useLocation } from 'react-router-dom';
 import IonIcon from '../components/IonIcon';
 import { Transaction, TransactionType, PaymentMedio, CreditCard } from '../mocks/mockData';
 import { useStore } from '../context/StoreContext';
+import { usePrefs } from '../context/PrefsContext';
 
 type Filter = 'all' | 'income' | 'expense';
-
-const fmt = (n: number) =>
-  n.toLocaleString('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
 
 const MEDIO_LABELS: Record<PaymentMedio, string> = {
   cash: 'Efectivo',
@@ -719,7 +717,7 @@ function CatAddRow({ newName, setNewName, onAdd }: CatAddRowProps) {
 }
 
 // ── DateCell ───────────────────────────────────────────────────────────────
-function DateCell({ dateStr }: { dateStr: string }) {
+function DateCell({ dateStr, formatDate }: { dateStr: string; formatDate: (d: string) => string }) {
   const [visible, setVisible] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -749,7 +747,7 @@ function DateCell({ dateStr }: { dateStr: string }) {
           transition-all duration-200 origin-bottom
           ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
       >
-        {formatFullDate(dateStr)}
+        {formatDate(dateStr)}
         <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900 dark:border-t-gray-700" />
       </span>
     </span>
@@ -793,6 +791,7 @@ export default function Transactions() {
     transactions, addTransaction, editTransaction, deleteTransaction,
     creditCards, categories, addCategory, deleteCategory, renameCategory,
   } = useStore();
+  const { fmt, formatDate } = usePrefs();
   const location = useLocation();
 
   const [search, setSearch] = useState('');
@@ -1205,7 +1204,7 @@ export default function Transactions() {
                       style={{ borderBottom: '1px solid var(--c-border-subtle)' }}
                     >
                       <td className="px-5 py-3">
-                        <DateCell dateStr={t.date} />
+                        <DateCell dateStr={t.date} formatDate={formatDate} />
                       </td>
                       <td className="px-5 py-3 font-medium" style={{ color: 'var(--c-text-primary)' }}>
                         {t.concept}

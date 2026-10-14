@@ -4,19 +4,7 @@ import { useStore } from '../context/StoreContext';
 import IonIcon from '../components/IonIcon';
 import { DEFAULT_CATEGORIES } from '../hooks/useStore';
 import { storageGet, storageSet } from '../services/storage';
-
-// ── Preference keys ────────────────────────────────────────────────────────
-const PREF_KEYS = {
-  CURRENCY:      'cashivars_pref_currency',
-  COMPACT_NUMS:  'cashivars_pref_compact_nums',
-  SHOW_BALANCE:  'cashivars_pref_show_balance',
-  START_PAGE:    'cashivars_pref_start_page',
-  HAPTICS:       'cashivars_pref_haptics',
-  BUDGET_ALERT:  'cashivars_pref_budget_alert',
-  BUDGET_LIMIT:  'cashivars_pref_budget_limit',
-  SHOW_CENTS:    'cashivars_pref_show_cents',
-  DATE_FORMAT:   'cashivars_pref_date_format',
-} as const;
+import { PREF_KEYS, PREFS_CHANGED_EVENT } from '../context/PrefsContext';
 
 const CURRENCIES = ['MXN', 'USD', 'EUR', 'COP', 'ARS', 'CLP', 'PEN'];
 const START_PAGES = [
@@ -324,9 +312,13 @@ export default function Settings() {
   const [importMsg,    setImportMsg]      = useState<{ ok: boolean; text: string } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  // Persist helpers
+  // Persist helpers — write to storage then notify PrefsContext in the same tab
   function set<T>(key: string, setter: (v: T) => void) {
-    return (v: T) => { setter(v); storageSet(key, v); };
+    return (v: T) => {
+      setter(v);
+      storageSet(key, v);
+      window.dispatchEvent(new Event(PREFS_CHANGED_EVENT));
+    };
   }
   const setCurrency    = set<string>(PREF_KEYS.CURRENCY,     setCurrencyRaw);
   const setCompactNums = set<boolean>(PREF_KEYS.COMPACT_NUMS, setCompactNumsRaw);
